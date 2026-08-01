@@ -96,7 +96,7 @@ export function CheckoutPage() {
       const order = await placeOrder({
         userId: user.id,
         items: lines.map((l) => ({
-          product: { id: l.productId, name: `Item #${l.productId.slice(0, 8)}`, images: [], price: l.unitPrice, discount_price: null } as any,
+          product: { id: l.productId, name: l.name, images: l.image ? [l.image] : [], price: l.unitPrice, discount_price: null } as any,
           variationId: l.variationId,
           quantity: l.quantity,
           unitPrice: l.unitPrice,
@@ -226,11 +226,18 @@ export function CheckoutPage() {
                 const key = `${l.productId}-${l.variationId ?? "base"}`;
                 return (
                   <div key={key} className="flex items-center gap-3">
-                    <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-medium">
-                      ×{l.quantity}
+                    <div className="relative size-12 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
+                      {l.image ? (
+                        <img src={l.image} alt={l.name} className="size-full object-cover" />
+                      ) : (
+                        <div className="size-full bg-gradient-to-br from-primary/10 to-violet/10" />
+                      )}
+                      <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-foreground text-[10px] font-bold text-background">
+                        {l.quantity}
+                      </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="truncate text-sm font-medium">Item #{l.productId.slice(0, 8)}</p>
+                      <p className="truncate text-sm font-medium">{l.name}</p>
                       <p className="text-xs text-muted-foreground">{money(l.unitPrice)}</p>
                     </div>
                     <span className="text-sm font-semibold">{money(l.unitPrice * l.quantity)}</span>

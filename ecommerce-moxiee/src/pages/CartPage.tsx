@@ -102,12 +102,17 @@ export function CartPage() {
                   className="flex gap-4 rounded-xl border border-border bg-card p-4"
                 >
                   <div className="size-24 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
-                    <div className="size-full bg-gradient-to-br from-primary/10 to-violet/10" />
+                    {line.image ? (
+                      <img src={line.image} alt={line.name} className="size-full object-cover" />
+                    ) : (
+                      <div className="size-full bg-gradient-to-br from-primary/10 to-violet/10" />
+                    )}
                   </div>
                   <div className="flex flex-1 flex-col">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="font-medium">Item #{line.productId.slice(0, 8)}</p>
+                        <p className="font-medium">{line.name}</p>
+                        {line.variationLabel && <p className="text-xs text-muted-foreground">{line.variationLabel}</p>}
                         <p className="text-xs text-muted-foreground">Unit price: {money(line.unitPrice)}</p>
                       </div>
                       <button

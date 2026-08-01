@@ -9,6 +9,9 @@ interface CartLine {
   variationId: string | null;
   quantity: number;
   unitPrice: number;
+  name: string;
+  image: string | null;
+  variationLabel: string | null;
 }
 
 interface CartState {
@@ -53,7 +56,20 @@ export const useCartStore = create<CartState>()(
               ),
             };
           }
-          return { lines: [...state.lines, { productId: product.id, variationId, quantity: qty, unitPrice }] };
+          return {
+            lines: [
+              ...state.lines,
+              {
+                productId: product.id,
+                variationId,
+                quantity: qty,
+                unitPrice,
+                name: product.name,
+                image: product.images?.[0] ?? null,
+                variationLabel: variation?.value ?? null,
+              },
+            ],
+          };
         });
         void persistToServer();
       },
@@ -98,6 +114,15 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "moxiee-cart",
+      version: 2,
+      // v1 carts didn't store product name/image, only IDs. Rather than
+      // showing "undefined" for those stale entries, just drop them —
+      // simplest safe migration since we'd need a product fetch to
+      // backfill the missing fields anyway.
+      migrate: (persisted: any, version) => {
+        if (version < 2) return { ...persisted, lines: [] };
+        return persisted;
+      },
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
       },

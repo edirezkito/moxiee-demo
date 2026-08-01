@@ -82,11 +82,15 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                       return (
                         <div key={key} className="flex gap-3">
                           <div className="size-20 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
-                            <div className="size-full bg-gradient-to-br from-primary/10 to-violet/10" />
+                            {line.image ? (
+                              <img src={line.image} alt={line.name} className="size-full object-cover" />
+                            ) : (
+                              <div className="size-full bg-gradient-to-br from-primary/10 to-violet/10" />
+                            )}
                           </div>
                           <div className="flex flex-1 flex-col">
                             <div className="flex items-start justify-between gap-2">
-                              <p className="text-sm font-medium line-clamp-1">Item {line.productId.slice(0, 6)}</p>
+                              <p className="text-sm font-medium line-clamp-1">{line.name}</p>
                               <button
                                 onClick={() => remove(line.productId, line.variationId)}
                                 className="text-muted-foreground hover:text-destructive transition-colors"

@@ -311,8 +311,11 @@ deployment** — never point a public demo at a real client's project.
    switch the demo to live keys.
 2. **Populate it with sample products**: run
    `supabase/migration/optional_demo_sample_products.sql` in the Supabase
-   SQL Editor (after the numbered migrations) to add 12 sample products
-   across all categories/brands, so the demo doesn't look empty.
+   SQL Editor (after the numbered migrations) to add 24 sample products
+   across all categories/brands, so the demo doesn't look empty. If you
+   ever need to correct a bad value in that seed data later (e.g. a wrong
+   image), add it to `supabase/migration/optional_fix_demo_product_images.sql`
+   instead of editing already-inserted rows by hand.
 3. **Deploy it** to Vercel or Netlify:
    - Push this project to your own GitHub repository first.
    - [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=YOUR_GITHUB_REPO_URL) —
