@@ -59,7 +59,7 @@ export function AuthPage() {
           <div className="absolute -bottom-16 -left-16 size-64 rounded-full bg-white/10 blur-2xl" />
           <div className="relative">
             <Link to="/" className="flex items-center gap-2">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-white/15 font-display font-bold">L</div>
+              <img src="/logo.png" alt="Moxiee" className="size-9 rounded-lg object-contain" />
               <span className="font-display text-xl font-bold">Moxiee</span>
             </Link>
           </div>
