@@ -106,6 +106,9 @@ export const useCartStore = create<CartState>()(
             variationId: i.variation_id,
             quantity: i.quantity,
             unitPrice: Number(i.unit_price),
+            name: i.product?.name ?? `Item #${i.product_id.slice(0, 8)}`,
+            image: i.product?.images?.[0] ?? null,
+            variationLabel: i.variation?.value ?? null,
           })),
           promoCode: null,
         });
