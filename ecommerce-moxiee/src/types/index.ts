@@ -177,6 +177,8 @@ export interface Order {
   tax?: number;
   stripe_session_id?: string | null;
   stripe_payment_intent_id?: string | null;
+  currency?: string;
+  fx_rate?: number;
   order_items?: OrderItem[];
 }
 
