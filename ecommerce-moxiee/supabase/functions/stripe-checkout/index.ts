@@ -215,7 +215,12 @@ Deno.serve(async (req) => {
       // turned on in the Stripe Dashboard first — see CLIENT_README.md.
       // If it isn't enabled, Stripe simply charges $0 tax, so this is
       // safe to leave on even before the merchant sets it up.
-      automatic_tax: { enabled: true },
+      // Disabled by default: Stripe Tax requires a verified business
+      // address (head office), and Stripe doesn't yet fully support
+      // Indonesia-based merchant accounts for this. Turn this back on
+      // once you have a Stripe account in a supported country and have
+      // completed the Tax setup in your Stripe Dashboard.
+      automatic_tax: { enabled: false },
       shipping_address_collection: {
         allowed_countries: [
           "US", "CA", "GB", "AU", "NZ", "DE", "FR", "ES", "IT", "NL",

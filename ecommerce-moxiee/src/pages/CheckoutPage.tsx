@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CreditCard, Wallet, Truck, ShieldCheck, Check, Lock, ArrowRight } from "lucide-react";
+import { CreditCard, Truck, ShieldCheck, Check, Lock, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/Button";
@@ -18,8 +18,7 @@ const SHIPPING_THRESHOLD = 75;
 const SHIPPING_FLAT = 9.99;
 
 const paymentMethods = [
-  { id: "card", label: "Credit / Debit Card", icon: CreditCard, desc: "Visa, Mastercard, Amex" },
-  { id: "wallet", label: "Digital Wallet", icon: Wallet, desc: "Apple Pay, Google Pay" },
+  { id: "card", label: "Card / Digital Wallet", icon: CreditCard, desc: "Visa, Mastercard, Amex, Apple Pay, Google Pay" },
   { id: "cod", label: "Cash on Delivery", icon: Truck, desc: "Pay when it arrives" },
 ];
 
@@ -71,7 +70,7 @@ export function CheckoutPage() {
     }
     setPlacing(true);
     try {
-      if (paymentMethod === "card" || paymentMethod === "wallet") {
+      if (paymentMethod === "card") {
         // Real payment: redirect to Stripe's hosted Checkout page. The
         // order is created server-side (status "pending"/"unpaid") and
         // only flips to "paid" once Stripe confirms payment via webhook.
@@ -167,7 +166,7 @@ export function CheckoutPage() {
               <span className="flex size-7 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">2</span>
               <h2 className="font-display text-lg font-semibold">Payment method</h2>
             </div>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               {paymentMethods.map((m) => (
                 <button
                   key={m.id}
@@ -192,14 +191,14 @@ export function CheckoutPage() {
               ))}
             </div>
 
-            {(paymentMethod === "card" || paymentMethod === "wallet") && (
+            {paymentMethod === "card" && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 className="mt-5"
               >
                 <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Lock className="size-3.5" /> You'll be redirected to Stripe's secure checkout to complete payment. Applicable tax is calculated automatically based on your address.
+                  <Lock className="size-3.5" /> You'll be redirected to Stripe's secure checkout to complete payment.
                 </p>
               </motion.div>
             )}

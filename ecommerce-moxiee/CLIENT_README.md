@@ -48,6 +48,18 @@ and Digital Wallet (Apple Pay/Google Pay) payments are handled by two
 Supabase Edge Functions in `supabase/functions/`. Cash on Delivery does
 not require any of this setup.
 
+⚠️ **Before you start**: Stripe requires your *business* to be based in
+one of its [supported countries](https://stripe.com/global) to create a
+verified merchant account. As of this writing, Indonesia is not on that
+list (it's listed as a limited "preview" market). Test-mode payments
+still work fine without full verification, so this doesn't block
+building/demoing the store — but if you (or a client) can't complete
+Stripe's business verification because of your country, you won't be
+able to receive real payouts through Stripe in live mode. In that case,
+consider a regional gateway instead (e.g. Midtrans or Xendit for
+Indonesia) — ask your developer about adding one alongside or instead of
+Stripe.
+
 1. **Create a Stripe account** at https://stripe.com (use Test mode while
    setting up — no real charges happen in Test mode).
 2. **Get your Secret Key**: Stripe Dashboard > Developers > API keys >
@@ -105,20 +117,30 @@ the app (e.g. bank transfer), and the payment status can still be updated
 manually via the dropdown next to each order.
 
 ### Turning on Tax Calculation (Stripe Tax)
-Card/Wallet checkout is already wired up to calculate tax automatically —
-you just need to turn the feature on in Stripe:
+Automatic tax calculation is **disabled by default** in this project
+(`automatic_tax: { enabled: false }` in `supabase/functions/stripe-checkout/index.ts`).
+Card/Wallet checkout is already wired up to support it — you just need to
+turn the feature on:
 
-1. Stripe Dashboard > **Settings > Tax** > follow the setup wizard to add
-   your tax registrations (the countries/states where you're required to
-   collect tax).
-2. That's it — no code changes needed. Once enabled, Stripe shows the
-   correct VAT/GST/sales tax live on the hosted Checkout page based on the
-   address the customer enters, and the amount is saved back to the
-   `tax` column on the order automatically.
+1. Stripe Dashboard > **Settings > Tax** > follow the setup wizard. This
+   requires setting a **head office/origin address** (Settings > Business
+   details), which in turn requires your Stripe account to be verified —
+   which requires your business to be based in a
+   [Stripe-supported country](https://stripe.com/global). **Indonesia is
+   not currently a fully self-serve-supported country for Stripe merchant
+   accounts** — if that applies to you, this step isn't available yet,
+   and that's expected, not a bug in this project.
+2. Once your Stripe account's Tax setup is complete, open
+   `supabase/functions/stripe-checkout/index.ts` and change
+   `automatic_tax: { enabled: false }` to `enabled: true`, then redeploy:
+   ```bash
+   supabase functions deploy stripe-checkout
+   ```
 3. Stripe Tax has its own small fee per transaction where it's active —
    check current pricing at https://stripe.com/tax before enabling.
-4. If you skip this step, checkout still works fine — Stripe just charges
-   $0 tax until you turn it on.
+4. With this disabled, checkout still works completely fine — Stripe just
+   doesn't add a tax line, which is the default state for a fresh
+   project.
 
 Note: this covers Card/Wallet orders only. Cash on Delivery orders are
 not run through Stripe Tax, so no tax is calculated on those — factor
@@ -300,50 +322,7 @@ category URL, then commit/redeploy so the updated file goes live. (A
 static fallback sitemap with just the core pages already ships in
 `public/sitemap.xml`, so the site works fine even before you run this.)
 
-## 15. Setting Up a Public Demo (for selling this template)
-If you're using this project as a live preview to sell to buyers (Envato,
-Gumroad, Fiverr, your own site, etc.), set up an **entirely separate demo
-deployment** — never point a public demo at a real client's project.
-
-1. **Create a dedicated demo Supabase project** (separate from any real
-   client's project) and run through Sections 2, 5, and 6 above using it.
-   Keep Stripe in **Test mode permanently** for this project — never
-   switch the demo to live keys.
-2. **Populate it with sample products**: run
-   `supabase/migration/optional_demo_sample_products.sql` in the Supabase
-   SQL Editor (after the numbered migrations) to add 24 sample products
-   across all categories/brands, so the demo doesn't look empty. If you
-   ever need to correct a bad value in that seed data later (e.g. a wrong
-   image), add it to `supabase/migration/optional_fix_demo_product_images.sql`
-   instead of editing already-inserted rows by hand.
-3. **Deploy it** to Vercel or Netlify:
-   - Push this project to your own GitHub repository first.
-   - [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=YOUR_GITHUB_REPO_URL) —
-     replace `YOUR_GITHUB_REPO_URL` with your repo's URL, or just import
-     the repo manually from the Vercel dashboard.
-   - Or use Netlify: Netlify Dashboard > Add new site > Import an existing
-     project > pick your repo.
-   - Add `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and
-     `VITE_DEMO_MODE=true` as environment variables on the hosting
-     platform.
-4. **`VITE_DEMO_MODE=true`** turns on a banner telling visitors it's a
-   live demo and gives them the Stripe test card number, so they feel safe
-   trying checkout instead of being afraid to "break" something — this
-   noticeably increases buyer trust and engagement with a public preview.
-5. **Create a demo admin account** (Section 7 above) using a throwaway
-   email, and consider sharing those demo credentials openly in your
-   marketplace listing (e.g. "Try the admin dashboard: demo@example.com /
-   Demo1234!") — letting buyers explore Admin > Products, Orders, Brands,
-   and Banners themselves is one of the strongest trust signals you can
-   offer, and it's a demo project with fake data, so there's nothing
-   sensitive to protect.
-6. **Reset periodically**: since anyone can place test orders or (if you
-   share the admin login) edit demo products, consider re-running the
-   sample data script every so often, or writing a small cron/edge
-   function to reset the demo database on a schedule if it sees heavy
-   traffic.
-
-## 16. Changing the Store Logo
+## 15. Changing the Store Logo
 The logo shown in the header and footer is the image file at
 `public/logo.png`. To replace it:
 1. Prepare your new logo image (square shape works best, transparent
