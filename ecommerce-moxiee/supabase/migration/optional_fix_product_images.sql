@@ -13,3 +13,10 @@
 update public.products
 set images = jsonb_build_array('https://images.pexels.com/photos/14188395/pexels-photo-14188395.jpeg')
 where slug = 'woven-throw-blanket';
+
+-- Fix: "Fitness Smartwatch" was originally seeded with an old Pexels
+-- photo (ID 23474, from 2016) that no longer loads. Replaced with a
+-- more recent, verified smartwatch photo.
+update public.products
+set images = jsonb_build_array('https://images.pexels.com/photos/35147278/pexels-photo-35147278.jpeg')
+where slug = 'fitness-smartwatch';
