@@ -226,7 +226,7 @@ export function HomePage() {
           eyebrow="Handpicked"
           title="Featured products"
           subtitle="Our editors' favorite picks this week."
-          link={{ to: "/shop", label: "Shop all" }}
+          link={{ to: "/shop?sort=featured", label: "Shop all" }}
         />
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {loading

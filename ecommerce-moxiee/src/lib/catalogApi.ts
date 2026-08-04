@@ -99,7 +99,15 @@ export async function fetchProducts(query: ProductQuery = {}): Promise<{ items: 
   }
   if (featured) q = q.eq("is_featured", true);
   if (bestseller) q = q.eq("is_bestseller", true);
-  if (onSale) q = q.not("discount_price", "is", null).lt("discount_price", "price");
+  // "On sale" = has a discount price set at all. (We intentionally don't
+  // also compare discount_price < price here — PostgREST/Supabase's
+  // .lt() compares a column to a literal value, not to another column,
+  // so a naive .lt("discount_price", "price") would silently compare
+  // against the text "price" instead of the price column and match
+  // nothing. Admins are expected to only set discount_price when it's
+  // genuinely lower, same assumption effectivePrice()/discountPercent()
+  // already make elsewhere.)
+  if (onSale) q = q.not("discount_price", "is", null);
   if (minPrice != null) q = q.gte("price", minPrice);
   if (maxPrice != null) q = q.lte("price", maxPrice);
 
@@ -180,7 +188,6 @@ export async function fetchOnSaleProducts(limit = 8): Promise<Product[]> {
     .select("*, category:categories(*), brand:brands(*)")
     .eq("is_active", true)
     .not("discount_price", "is", null)
-    .lt("discount_price", "price")
     .limit(limit);
   if (error) throw error;
   return (data as Product[]) ?? [];

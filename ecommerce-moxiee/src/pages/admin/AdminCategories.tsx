@@ -7,6 +7,7 @@ import { Input, Label, Textarea } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { toast } from "@/store/toastStore";
 import { slugify } from "@/lib/utils";
+import { ImageDropzone } from "@/components/admin/ImageDropzone";
 
 const emptyForm = { name: "", slug: "", description: "", image_url: "" };
 
@@ -142,8 +143,12 @@ export function AdminCategories() {
             <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} />
           </div>
           <div>
-            <Label>Image URL</Label>
-            <Input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." />
+            <Label>Category Image</Label>
+            <ImageDropzone
+              images={form.image_url ? [form.image_url] : []}
+              onChange={(images) => setForm({ ...form, image_url: images[images.length - 1] ?? "" })}
+              maxImages={1}
+            />
           </div>
           <Button type="submit" variant="gradient" className="w-full" disabled={saving}>{saving ? "Saving..." : "Save category"}</Button>
         </form>

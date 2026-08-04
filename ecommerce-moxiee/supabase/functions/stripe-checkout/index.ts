@@ -210,6 +210,10 @@ Deno.serve(async (req) => {
       line_items,
       discounts: stripeDiscounts,
       customer_email: user.email ?? undefined,
+      // "auto" (Stripe's default) detects and matches the shopper's
+      // browser language automatically — e.g. a French visitor sees the
+      // checkout page in French, without any extra setup needed here.
+      locale: "auto",
       // Stripe Tax: automatically calculates the correct tax (VAT/GST/
       // sales tax) for the customer's address. Requires Stripe Tax to be
       // turned on in the Stripe Dashboard first — see CLIENT_README.md.

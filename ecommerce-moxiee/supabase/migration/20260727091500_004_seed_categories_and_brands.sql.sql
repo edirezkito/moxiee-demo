@@ -3,16 +3,17 @@
 -- Run this AFTER the 3 migration files in this folder have been applied.
 
 -- ---------- Categories ----------
-insert into public.categories (name, slug, description) values
-  ('Accessories', 'accessories', 'Bags, jewelry, watches, and everyday accessories.'),
-  ('Beauty',      'beauty',      'Skincare, makeup, and personal care products.'),
-  ('Digital',     'digital',     'Digital goods and downloadable products.'),
-  ('Electronics', 'electronics', 'Gadgets, devices, and electronic accessories.'),
-  ('Fashion',     'fashion',     'Apparel and clothing for everyday wear.'),
-  ('Home',        'home',        'Home decor, furniture, and living essentials.')
+insert into public.categories (name, slug, description, image_url) values
+  ('Accessories', 'accessories', 'Bags, jewelry, watches, and everyday accessories.', 'https://images.pexels.com/photos/28719728/pexels-photo-28719728.jpeg'),
+  ('Beauty',      'beauty',      'Skincare, makeup, and personal care products.', 'https://images.pexels.com/photos/4841273/pexels-photo-4841273.jpeg'),
+  ('Digital',     'digital',     'Digital goods and downloadable products.', 'https://images.pexels.com/photos/6406691/pexels-photo-6406691.jpeg'),
+  ('Electronics', 'electronics', 'Gadgets, devices, and electronic accessories.', 'https://images.pexels.com/photos/3184451/pexels-photo-3184451.jpeg'),
+  ('Fashion',     'fashion',     'Apparel and clothing for everyday wear.', 'https://images.pexels.com/photos/2249249/pexels-photo-2249249.jpeg'),
+  ('Home',        'home',        'Home decor, furniture, and living essentials.', 'https://images.pexels.com/photos/4468806/pexels-photo-4468806.jpeg')
 on conflict (slug) do update set
   name = excluded.name,
-  description = excluded.description;
+  description = excluded.description,
+  image_url = excluded.image_url;
 
 -- ---------- Brands ----------
 insert into public.brands (name, slug) values

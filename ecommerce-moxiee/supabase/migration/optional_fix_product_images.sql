@@ -20,3 +20,13 @@ where slug = 'woven-throw-blanket';
 update public.products
 set images = jsonb_build_array('https://images.pexels.com/photos/35147278/pexels-photo-35147278.jpeg')
 where slug = 'fitness-smartwatch';
+
+-- Fix: categories originally had no image_url at all (added after the
+-- initial 004 seed had already run on existing demo databases). Safe to
+-- run again — no-op if already set.
+update public.categories set image_url = 'https://images.pexels.com/photos/28719728/pexels-photo-28719728.jpeg' where slug = 'accessories';
+update public.categories set image_url = 'https://images.pexels.com/photos/4841273/pexels-photo-4841273.jpeg' where slug = 'beauty';
+update public.categories set image_url = 'https://images.pexels.com/photos/6406691/pexels-photo-6406691.jpeg' where slug = 'digital';
+update public.categories set image_url = 'https://images.pexels.com/photos/3184451/pexels-photo-3184451.jpeg' where slug = 'electronics';
+update public.categories set image_url = 'https://images.pexels.com/photos/2249249/pexels-photo-2249249.jpeg' where slug = 'fashion';
+update public.categories set image_url = 'https://images.pexels.com/photos/4468806/pexels-photo-4468806.jpeg' where slug = 'home';

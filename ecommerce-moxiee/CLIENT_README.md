@@ -1,6 +1,6 @@
 # Welcome — Moxiee Ecommerce Setup Guide
 
-This document helps you (the client) run this project in your own
+This document helps you run this project in your own
 environment. See `README.md` for full technical documentation (folder
 structure, features, database schema).
 
@@ -53,12 +53,11 @@ one of its [supported countries](https://stripe.com/global) to create a
 verified merchant account. As of this writing, Indonesia is not on that
 list (it's listed as a limited "preview" market). Test-mode payments
 still work fine without full verification, so this doesn't block
-building/demoing the store — but if you (or a client) can't complete
+building/demoing the store — but if you can't complete
 Stripe's business verification because of your country, you won't be
 able to receive real payouts through Stripe in live mode. In that case,
 consider a regional gateway instead (e.g. Midtrans or Xendit for
-Indonesia) — ask your developer about adding one alongside or instead of
-Stripe.
+Indonesia) — ask your developer about adding one alongside or instead of Stripe.
 
 1. **Create a Stripe account** at https://stripe.com (use Test mode while
    setting up — no real charges happen in Test mode).
@@ -107,6 +106,13 @@ re-verified inside the `stripe-checkout` function using your database as
 the source of truth — the browser is never trusted with the final amount
 charged.
 
+Note on language: the Stripe Checkout page automatically matches each
+shopper's browser language (`locale: "auto"` in
+`supabase/functions/stripe-checkout/index.ts`). 
+To force a single fixed language instead (e.g. for a region-specific store),
+change this to a specific locale code like `"en"` — see Stripe's docs for
+the full list of supported locale codes.
+
 ### Refunding an order
 In Admin > Orders, any order paid via Card/Digital Wallet shows a
 **"Refund via Stripe"** button once its payment status is "paid". Clicking
@@ -126,10 +132,7 @@ turn the feature on:
    requires setting a **head office/origin address** (Settings > Business
    details), which in turn requires your Stripe account to be verified —
    which requires your business to be based in a
-   [Stripe-supported country](https://stripe.com/global). **Indonesia is
-   not currently a fully self-serve-supported country for Stripe merchant
-   accounts** — if that applies to you, this step isn't available yet,
-   and that's expected, not a bug in this project.
+   [Stripe-supported country](https://stripe.com/global).
 2. Once your Stripe account's Tax setup is complete, open
    `supabase/functions/stripe-checkout/index.ts` and change
    `automatic_tax: { enabled: false }` to `enabled: true`, then redeploy:
@@ -139,13 +142,11 @@ turn the feature on:
 3. Stripe Tax has its own small fee per transaction where it's active —
    check current pricing at https://stripe.com/tax before enabling.
 4. With this disabled, checkout still works completely fine — Stripe just
-   doesn't add a tax line, which is the default state for a fresh
-   project.
+   doesn't add a tax line, which is the default state for a fresh project.
 
 Note: this covers Card/Wallet orders only. Cash on Delivery orders are
 not run through Stripe Tax, so no tax is calculated on those — factor
-that into your COD pricing/policy if you offer it in a region with
-mandatory sales tax.
+that into your COD pricing/policy if you offer it in a region with mandatory sales tax.
 
 ### Cookie Consent Banner
 A cookie consent banner (`src/components/layout/CookieConsentBanner.tsx`)
@@ -164,8 +165,8 @@ work regardless of this choice, since those are required for the site to
 function and don't need opt-in consent under GDPR/most privacy laws.
 
 ## 6. Setting Up Order Confirmation Emails
-Order confirmation emails are sent through [Resend](https://resend.com), a
-simple transactional email API. This step is optional — if you skip it,
+Order confirmation emails are sent through [Resend](https://resend.com),
+a simple transactional email API. This step is optional — if you skip it,
 the store still works fine, it just won't send emails.
 
 1. **Create a free Resend account** at https://resend.com.
@@ -189,9 +190,8 @@ the store still works fine, it just won't send emails.
    ```
    (If you already deployed `stripe-webhook` in the Stripe setup step
    before adding `RESEND_API_KEY`, redeploy it so it picks up the secret.)
-5. **Test it**: place a test order (Card or Cash on Delivery) — a
-   confirmation email should arrive at the account's email address within
-   a few seconds.
+5. **Test it**: place a test order (Card or Cash on Delivery) — a confirmation
+   email should arrive at the account's email address within a few seconds.
 
 Card/wallet orders are emailed automatically once Stripe confirms payment
 (triggered from `stripe-webhook`). Cash on Delivery orders are emailed
@@ -203,7 +203,8 @@ called by the checkout page).
    using the email/password you want to use as the store admin.
 2. Open the Supabase Dashboard > **SQL Editor**.
 3. Open `supabase/migration/promote_to_admin.sql`, replace the placeholder
-   email with the email you just signed up with, and run it.
+   email with the email you just signed up with, and run it. You can Active/Unactive
+   email confirmation on Supabase > Authentication > Sign In/Providers > Confirm email.
 4. Log in again, then visit `/admin` to access the admin dashboard.
 
 Note: there is no default/shared admin account included with this project.
@@ -299,8 +300,7 @@ npx playwright install  # first time only, installs browser binaries
 npm run test:e2e
 ```
 E2E tests need a working `.env` (Section 3) since they run against the
-real dev server and Supabase project — point them at a test/demo project,
-not a real client's live store.
+real dev server and Supabase project
 
 ## 14. Deployment
 This is a standard Vite application and can be deployed to platforms such as
@@ -309,8 +309,7 @@ Vercel, Netlify, or Cloudflare Pages. Make sure the `VITE_SUPABASE_URL` and
 hosting platform's dashboard.
 
 Before (or right after) each deploy, regenerate the sitemap so search
-engines can discover every product/category page, not just the static
-ones:
+engines can discover every product/category page, not just the static ones:
 ```bash
 SITE_URL=https://your-store-domain.com \
 VITE_SUPABASE_URL=https://your-project-ref.supabase.co \
@@ -318,8 +317,8 @@ VITE_SUPABASE_ANON_KEY=your-anon-key \
 npm run generate:sitemap
 ```
 This overwrites `public/sitemap.xml` with every active product and
-category URL, then commit/redeploy so the updated file goes live. (A
-static fallback sitemap with just the core pages already ships in
+category URL, then commit/redeploy so the updated file goes live.
+(A static fallback sitemap with just the core pages already ships in
 `public/sitemap.xml`, so the site works fine even before you run this.)
 
 ## 15. Changing the Store Logo
